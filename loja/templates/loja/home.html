@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedAI - Produtos Locais</title>
+    
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .vitrine { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .card-produto { border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+        .card-produto img { max-width: 100%; height: auto; }
+        .preco { font-weight: bold; color: #006400; }
+    </style>
+</head>
+<body>
+
+    <h1>🛒 PedAI - O teu marketplace local</h1>
+    <h2>Produtos disponíveis perto de ti:</h2>
+
+    <div class="vitrine">
+        
+        {% for produto in produtos %}
+            <div class="card-produto">
+                
+                {% if produto.foto %}
+                    <img src="{{ produto.foto.url }}" alt="{{ produto.nome }}">
+                {% endif %}
+                
+                <h3>{{ produto.nome }}</h3>
+                <p class="preco">R$ {{ produto.preco }}</p>
+                <p>Vendido por: {{ produto.vendedor.username }}</p>
+                <p>Em estoque: {{ produto.disponibilidade }}</p>
+                <p>{{ produto.descricao }}</p>
+            </div>
+        {% endfor %}
+
+    </div>
+
+</body>
+</html>
