@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PedAI - Marketplace Acadêmico</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+       
+        :root {
+            --ficr-blue: #003366;
+            --ficr-gold: #FFCC00; 
+        }
+
+        
+        [data-bs-theme="light"] {
+            --bs-primary: var(--ficr-blue);
+            --bs-primary-rgb: 0, 51, 102;
+            --bs-body-bg: #f4f6f9; 
+            .navbar-custom { background-color: var(--ficr-blue); }
+            .btn-ficr { background-color: var(--ficr-gold); color: #000; font-weight: bold; }
+            .text-ficr { color: var(--ficr-blue); }
+        }
+
+        
+        [data-bs-theme="dark"] {
+            --bs-primary: #4d94ff; 
+            --bs-body-bg: #121212; 
+            .navbar-custom { background-color: #0d1b2a; border-bottom: 1px solid #333; }
+            .btn-ficr { background-color: var(--ficr-gold); color: #000; font-weight: bold; }
+            .text-ficr { color: var(--ficr-gold); }
+            .card { border-color: #333; }
+        }
+
+        
+        body { display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+        main { flex: 1; }
+        .navbar-brand { font-weight: bold; font-size: 1.5rem; letter-spacing: 1px; }
+        .card-img-top { height: 200px; object-fit: cover; }
+        
+        
+        .theme-icon { transition: transform 0.5s; }
+        .theme-icon:hover { transform: rotate(30deg); }
+
+    </style>
+
+    <script>
+        const storedTheme = localStorage.getItem('theme')
+        const getPreferredTheme = () => {
+            if (storedTheme) { return storedTheme }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        document.documentElement.setAttribute('data-bs-theme', getPreferredTheme())
+    </script>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'loja:home' %}">
+                <i class="bi bi-mortarboard-fill text-warning"></i> PedAI <span style="font-size: 0.8rem; opacity: 0.8;">| FICR</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    
+                    <li class="nav-item"><a class="nav-link" href="{% url 'loja:home' %}">Vitrine</a></li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'pedidos:meus_pedidos' %}">Meus Pedidos</a></li>
+                        <li class="nav-item ms-2 d-none d-lg-block"><span class="nav-link disabled">|</span></li>
+                        <li class="nav-item ms-2"><span class="nav-link text-warning">Olá, {{ user.username }}</span></li>
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-light ms-3">Sair</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-sm btn-ficr" href="{% url 'registro' %}">Criar Conta</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-link nav-link py-2 px-0 px-lg-2" id="bd-theme" type="button" onclick="toggleTheme()">
+                            <i class="bi bi-moon-stars-fill theme-icon" id="theme-icon-display"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="mt-5 py-4 text-center border-top">
+        <div class="container">
+            <p class="mb-0 text-body-secondary">&copy; 2025 PedAI - Projeto Acadêmico FICR</p>
+            <small class="text-body-tertiary">Conectando a comunidade estudantil</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const themeIcon = document.getElementById('theme-icon-display');
+        
+        function updateIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.remove('bi-moon-stars-fill');
+                themeIcon.classList.add('bi-sun-fill');
+            } else {
+                themeIcon.classList.remove('bi-sun-fill');
+                themeIcon.classList.add('bi-moon-stars-fill');
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            html.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon(newTheme);
+        }
+
+        
+        updateIcon(document.documentElement.getAttribute('data-bs-theme'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-ficr fw-bold"><i class="bi bi-shop"></i> Painel do Vendedor</h2>
+        <a href="#" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Novo Produto
+        </a>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body">
+            {% if produtos %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Foto</th>
+                                <th>Produto</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for produto in produtos %}
+                            <tr>
+                                <td style="width: 80px;">
+                                    {% if produto.foto %}
+                                        <img src="{{ produto.foto.url }}" class="rounded" width="50" height="50" style="object-fit: cover;">
+                                    {% else %}
+                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td class="fw-bold">{{ produto.nome }}</td>
+                                <td>R$ {{ produto.preco }}</td>
+                                <td>
+                                    {% if produto.disponibilidade > 0 %}
+                                        <span class="badge bg-success">{{ produto.disponibilidade }} un.</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Esgotado</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if produto.ativo %}
+                                        <span class="text-success"><i class="bi bi-check-circle-fill"></i> Ativo</span>
+                                    {% else %}
+                                        <span class="text-muted"><i class="bi bi-pause-circle-fill"></i> Pausado</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-basket display-1 text-muted"></i>
+                    <h4 class="mt-3">Sua loja está vazia!</h4>
+                    <p class="text-muted">Comece adicionando o seu primeiro produto.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

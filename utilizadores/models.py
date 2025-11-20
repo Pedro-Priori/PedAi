@@ -16,7 +16,7 @@ class Usuario(AbstractUser):
     tipo_utilizador = models.CharField(
         max_length=10,
         choices=Tipo.choices,
-        default=Tipo.COMPRADOR, # Por defeito, quem se regista é comprador
+        default=Tipo.COMPRADOR,
         verbose_name="Tipo de Utilizador"
     )
     

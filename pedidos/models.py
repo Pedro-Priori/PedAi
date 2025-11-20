@@ -1,8 +1,8 @@
 from django.db import models
 from django.conf import settings
-from loja.models import Produto # Importamos o Produto da app 'loja'
+from loja.models import Produto
 from django.core.validators import MinValueValidator, MaxValueValidator
-import uuid # Para gerar IDs únicos para os pedidos
+import uuid 
 
 
 
@@ -17,20 +17,19 @@ class Pedido(models.Model):
         CONCLUIDO = 'concluido', 'Concluído'
         CANCELADO = 'cancelado', 'Cancelado'
 
-    # --- Relacionamentos ---
+    
     comprador = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL, # Se o comprador for apagado, o pedido fica no histórico
+        on_delete=models.SET_NULL,
         null=True,
         related_name="pedidos",
         limit_choices_to={'tipo_utilizador': 'comprador'}
     )
     
-    # Um pedido pode ter vários produtos.
-    # Usamos um modelo 'through' (ItemPedido) para especificar a QUANTIDADE.
+    
     produtos = models.ManyToManyField(Produto, through='ItemPedido')
 
-    # --- Campos ---
+
     status = models.CharField(
         max_length=15, 
         choices=Status.choices, 
@@ -41,7 +40,7 @@ class Pedido(models.Model):
         verbose_name="Horário Definido para Retirada"
     )
     
-    # O ID que será usado para gerar o QR Code
+
     qr_code_id = models.UUIDField(
         default=uuid.uuid4, 
         editable=False, 
@@ -64,36 +63,31 @@ class ItemPedido(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE, related_name="itens_pedido")
     quantidade = models.PositiveIntegerField(default=1)
     
-    # Guarda o preço no momento da compra
+
     preco_unitario = models.DecimalField(max_digits=10, decimal_places=2) 
 
     def __str__(self):
         return f"{self.quantidade}x {self.produto.nome} @ {self.preco_unitario}"
 
-    # ---------------------------------------------------------------------
-    # AQUI ESTÁ A TUA LÓGICA DE ESTOQUE AUTOMÁTICO!
-    # ---------------------------------------------------------------------
+  
     def save(self, *args, **kwargs):
-        # Esta função é chamada sempre que um ItemPedido é salvo.
-        
-        # Se o item está a ser criado (não tem 'id' ainda)
+    
         if not self.pk: 
             if self.produto.disponibilidade < self.quantidade:
-                # Se não houver estoque, não permitimos a criação
+                
                 raise ValueError(f"Estoque insuficiente para {self.produto.nome}.")
             
-            # Diminui o estoque
+        
             self.produto.disponibilidade -= self.quantidade
             self.produto.save()
         
-        # Guarda o preço atual do produto no item
+        
         self.preco_unitario = self.produto.preco 
         
-        super().save(*args, **kwargs) # Salva o ItemPedido
+        super().save(*args, **kwargs) 
 
     def delete(self, *args, **kwargs):
-        # Se o item for removido do pedido (ou o pedido cancelado), 
-        # devolvemos o estoque ao produto.
+
         self.produto.disponibilidade += self.quantidade
         self.produto.save()
         super().delete(*args, **kwargs)
@@ -106,12 +100,12 @@ class Avaliacao(models.Model):
     """
     pedido = models.OneToOneField(
         Pedido,
-        on_delete=models.CASCADE, # Se o pedido for apagado, a avaliação também é
-        related_name="avaliacao"  # Permite aceder a Pedido.avaliacao
+        on_delete=models.CASCADE, 
+        related_name="avaliacao"  
     )
     
     nota = models.PositiveIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)], # Nota de 1 a 5
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
     )
     comentario = models.TextField(blank=True, null=True)
     data_criacao = models.DateTimeField(auto_now_add=True)
