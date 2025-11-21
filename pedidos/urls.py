@@ -4,5 +4,7 @@ from . import views
 app_name = 'pedidos'
 
 urlpatterns = [
-    path('meus-pedidos/', views.meus_pedidos, name= 'meus_pedidos')
+    path('meus-pedidos/', views.meus_pedidos, name= 'meus_pedidos'),
+    
+    path('qrcode/<int:pedido_id>/', views.gerar_qrcode, name='gerar_qrcode'),
 ]

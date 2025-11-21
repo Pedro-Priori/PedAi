@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-plus-square"></i> Cadastrar Novo Produto</h4>
+            </div>
+            <div class="card-body p-4">
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nome do Produto</label>
+                        {{ form.nome }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Preço (R$)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                {{ form.preco }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Estoque Inicial</label>
+                            {{ form.disponibilidade }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Descrição</label>
+                        {{ form.descricao }}
+                        <div class="form-text">Descreva os ingredientes ou detalhes importantes.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Foto do Produto</label>
+                        {{ form.foto }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning fw-bold py-2">
+                            Salvar Produto
+                        </button>
+                        <a href="{% url 'loja:minha_loja' %}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

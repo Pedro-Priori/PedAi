@@ -1,6 +1,6 @@
 # Em loja/urls.py
 from django.urls import path
-from . import views 
+from .urls import views 
 
 app_name = 'loja'
 

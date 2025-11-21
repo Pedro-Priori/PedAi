@@ -39,7 +39,15 @@
                         {% endif %}
                     </td>
                     <td>
-                        <span class="badge bg-light text-dark border font-monospace">{{ pedido.qr_code_id|truncatechars:8 }}</span>
+                        <img src="{% url 'pedidos:gerar_qrcode' pedido.id %}" 
+                            alt="QR Code" 
+                            width="80" 
+                            height="80" 
+                            class="border p-1 bg-white">
+
+                        <div style="font-size: 10px; color: #aaa;" class="mt-1">
+                            ID: {{ pedido.id }}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}

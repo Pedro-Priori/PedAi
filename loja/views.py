@@ -3,10 +3,43 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Produto
 from pedidos.models import Pedido, ItemPedido
+from .forms import ProdutoForm
 
 def home(request):
     produtos = Produto.objects.filter(ativo=True, disponibilidade__gt=0).order_by('nome')
     return render(request, 'loja/home.html', {'produtos': produtos})
+
+@login_required
+def minha_loja(request):
+    
+    if request.user.tipo_utilizador != 'vendedor':
+        messages.warning(request, "Você não tem permissão de vendedor.")
+        return redirect('loja:home')
+    
+    produtos = Produto.objects.filter(vendedor=request.user)
+    return render(request, 'loja/minha_loja.html', {'produtos': produtos})
+
+@login_required
+def adicionar_produto(request):
+    
+    if request.user.tipo_utilizador != 'vendedor':
+        return redirect('loja:home')
+    
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            produto = form.save(commit= False)
+            produto.vendedor = request.user
+            produto.save()
+            
+            messages.success(request, "Produto adicionado com Sucesso!")
+            return redirect('loja:minha_loja')
+        
+    else:
+        form = ProdutoForm()
+            
+    return render(request, 'loja/adicionar_produto.html', {'form': form})
 
 
 @login_required
@@ -49,11 +82,18 @@ def detalhe_produto(request, produto_id):
     return render(request, 'loja/detalhe.html', {'produto': produto})
 
 @login_required
-def minha_loja(request):
+def editar_produto(request, produto_id):
+    produto = get_object_or_404(Produto,id = produto_id, vendedor = request.user)
     
-    if request.user.tipo_utilizador != 'vendedor':
-        return redirect('loja:home')
-
-    produtos = Produto.objects.filter(vendedor=request.user)
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST, request.FILES, instance= produto)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Produto Atualizado com Sucesso!!")
+            return redirect('loja:minha_loja')
     
-    return render(request, 'loja/minha_loja.html', {'produtos': produtos})
+    else: 
+        form = ProdutoForm(instance=produto)
+        
+    return render(request, 'loja/editar_produto.html', {'form': form, 'produto': produto})
