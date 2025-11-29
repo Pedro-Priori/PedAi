@@ -31,11 +31,29 @@
                     <td class="fw-bold">R$ {{ pedido.total }}</td>
                     <td>
                         {% if pedido.status == 'pendente' %}
-                            <span class="badge bg-warning text-dark">Pendente</span>
+                            <span class="badge bg-warning text-dark d-block mb-2">Pendente</span>
                         {% elif pedido.status == 'confirmado' %}
-                            <span class="badge bg-success">Confirmado</span>
+                            <span class="badge bg-primary d-block mb-2">Em Preparo</span>
+                        {% elif pedido.status == 'concluido' %}
+                            <span class="badge bg-success d-block mb-2">Concluído</span>
                         {% else %}
-                            <span class="badge bg-secondary">{{ pedido.get_status_display }}</span>
+                            <span class="badge bg-secondary d-block mb-2">{{ pedido.get_status_display }}</span>
+                        {% endif %}
+
+                        {% if pedido.status == 'concluido' %}
+                            {% if pedido.avaliacao %}
+                                <div class="text-warning small" title="{{ pedido.avaliacao.comentario }}">
+                                    {% if pedido.avaliacao.nota == 5 %}⭐⭐⭐⭐⭐
+                                    {% elif pedido.avaliacao.nota == 4 %}⭐⭐⭐⭐
+                                    {% elif pedido.avaliacao.nota == 3 %}⭐⭐⭐
+                                    {% elif pedido.avaliacao.nota == 2 %}⭐⭐
+                                    {% else %}⭐{% endif %}
+                                </div>
+                            {% else %}
+                                <a href="{% url 'pedidos:avaliar_pedido' pedido.id %}" class="btn btn-sm btn-outline-warning w-100">
+                                    <i class="bi bi-star"></i> Avaliar
+                                </a>
+                            {% endif %}
                         {% endif %}
                     </td>
                     <td>

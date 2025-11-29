@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-star-fill"></i> Avaliar Pedido #{{ pedido.id }}</h4>
+            </div>
+            <div class="card-body p-4">
+                
+                <div class="alert alert-light border mb-4">
+                    <p class="mb-1"><strong>Você comprou:</strong></p>
+                    <ul class="mb-0 text-muted small">
+                        {% for item in pedido.itens.all %}
+                            <li>{{ item.quantidade }}x {{ item.produto.nome }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nota (1 a 5 Estrelas)</label>
+                        {{ form.nota }}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Comentário</label>
+                        {{ form.comentario }}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary fw-bold">Enviar Avaliação</button>
+                        <a href="{% url 'pedidos:meus_pedidos' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(function(input) {
+        input.classList.add('form-control');
+    });
+</script>
+
+{% endblock %}
