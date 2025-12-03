@@ -5,6 +5,7 @@ from .models import Produto
 from pedidos.models import Pedido, ItemPedido
 from .forms import ProdutoForm
 
+
 def home(request):
     produtos = Produto.objects.filter(ativo=True, disponibilidade__gt=0).order_by('nome')
     return render(request, 'loja/home.html', {'produtos': produtos})

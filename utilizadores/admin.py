@@ -26,3 +26,4 @@ class UsuarioAdmin(UserAdmin):
     
     # Campos para mostrar na lista principal de utilizadores
     list_display = ['username', 'email', 'first_name', 'last_name', 'tipo_utilizador', 'is_staff']
+    

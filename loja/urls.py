@@ -16,10 +16,10 @@ urlpatterns = [
     # 2. Adicionar Produto
     path('minha-loja/adicionar/', views.adicionar_produto, name='adicionar_produto'),
     
-    # 3. Editar Produto (A ROTA QUE FALTAVA)
+    # 3. Editar Produto 
     path('minha-loja/editar/<int:produto_id>/', views.editar_produto, name='editar_produto'),
 
-    # 4. Excluir Produto (Vamos precisar desta também)
+    # 4. Excluir Produto 
     path('minha-loja/excluir/<int:produto_id>/', views.excluir_produto, name='excluir_produto'),
 
     # 5. Painel de Vendas

@@ -14,3 +14,4 @@ class ProdutoAdmin(admin.ModelAdmin):
     
     # Campos de pesquisa
     search_fields = ('nome', 'vendedor__username') # Permite procurar pelo nome do produto ou username do vendedor
+    

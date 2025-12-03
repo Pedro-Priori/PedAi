@@ -16,3 +16,4 @@ class AvaliacaoForm(forms.ModelForm):
                 'placeholder': 'Nos diga o que acho?'
             })
         }
+

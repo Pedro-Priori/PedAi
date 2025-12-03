@@ -28,3 +28,4 @@ class Usuario(AbstractUser):
     def __str__(self):
         # Mostra o username e o tipo entre parênteses
         return f"{self.username} ({self.get_tipo_utilizador_display()})"
+    

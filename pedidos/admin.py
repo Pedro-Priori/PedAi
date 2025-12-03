@@ -31,3 +31,4 @@ class AvaliacaoAdmin(admin.ModelAdmin):
     """
     list_display = ('pedido', 'nota', 'data_criacao')
     list_filter = ('nota',)
+    

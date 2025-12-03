@@ -6,6 +6,8 @@ import uuid
 
 
 
+
+
 class Pedido(models.Model):
     """
     Representa o pedido (reserva) feito por um Comprador.

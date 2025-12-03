@@ -22,3 +22,4 @@ class RegistoCompradorForm(UserCreationForm):
             'tipo_utilizador':'Sou :',
             'local': 'Meu local é '
         }
+        

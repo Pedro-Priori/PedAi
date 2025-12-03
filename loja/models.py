@@ -27,18 +27,18 @@ class Produto(models.Model):
         blank=True, 
         null=True
     )
-    
+
     # Este é o campo de ESTOQUE
     disponibilidade = models.PositiveIntegerField(
         default=0,
         verbose_name="Estoque Disponível"
     )
     
-    
     ativo = models.BooleanField(default=True) 
 
     def __str__(self):
         return f"{self.nome} - {self.vendedor.username}"
+    
 
     class Meta:
         ordering = ['nome'] 
