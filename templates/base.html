@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,32 +9,73 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
     <style>
-        :root { --ficr-blue: #003366; --ficr-gold: #FFCC00; }
+        /* --- IDENTIDADE VISUAL FICR --- */
+        :root {
+            --ficr-blue: #003366; /* Azul Institucional */
+            --ficr-gold: #FFCC00; /* Amarelo/Dourado Institucional */
+        }
+
+        /* Modo CLARO */
         [data-bs-theme="light"] {
             --bs-primary: var(--ficr-blue);
+            --bs-body-bg: #f8f9fa;
             .navbar-custom { background-color: var(--ficr-blue); }
             .btn-ficr { background-color: var(--ficr-gold); color: #000; font-weight: bold; }
             .text-ficr { color: var(--ficr-blue); }
+            .text-warning { color: var(--ficr-gold) !important; }
         }
+
+        /* Modo ESCURO */
         [data-bs-theme="dark"] {
             --bs-primary: #4d94ff;
+            --bs-body-bg: #121212;
             .navbar-custom { background-color: #0d1b2a; border-bottom: 1px solid #333; }
             .btn-ficr { background-color: var(--ficr-gold); color: #000; font-weight: bold; }
             .text-ficr { color: var(--ficr-gold); }
         }
+
+        /* Estilos Gerais */
         body { display: flex; flex-direction: column; min-height: 100vh; }
         main { flex: 1; }
+        .navbar-brand { font-weight: bold; letter-spacing: 0.5px; }
         .card-img-top { height: 200px; object-fit: cover; }
+        
+        .theme-icon { transition: transform 0.5s; }
+        .theme-icon:hover { transform: rotate(30deg); }
     </style>
+
+    <script>
+        (() => {
+            'use strict'
+            const getStoredTheme = () => localStorage.getItem('theme')
+            const getPreferredTheme = () => {
+                const storedTheme = getStoredTheme()
+                if (storedTheme) {
+                    return storedTheme
+                }
+                // Se não houver preferência salva, usa a do sistema
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+            }
+
+            const setTheme = theme => {
+                if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-bs-theme', 'dark')
+                } else {
+                    document.documentElement.setAttribute('data-bs-theme', theme)
+                }
+            }
+
+            setTheme(getPreferredTheme())
+        })()
+    </script>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm mb-4">
         <div class="container">
             <a class="navbar-brand" href="{% url 'loja:home' %}">
-                <i class="bi bi-mortarboard-fill text-warning"></i> PedAI
+                <i class="bi bi-mortarboard-fill text-warning"></i> PedAI <span style="font-size: 0.8rem; opacity: 0.8;">| FICR</span>
             </a>
-            
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -49,8 +90,13 @@
                         
                         {% if user.tipo_utilizador == 'vendedor' %}
                             <li class="nav-item">
-                                <a class="nav-link active text-warning fw-bold" href="{% url 'loja:minha_loja' %}">
-                                    <i class="bi bi-shop-window"></i> Minha Loja
+                                <a class="nav-link text-warning" href="{% url 'loja:minha_loja' %}">
+                                    <i class="bi bi-box"></i> Produtos
+                                </a>
+                            </li>
+                            <li class="nav-item ms-2">
+                                <a class="nav-link text-warning fw-bold" href="{% url 'loja:painel_vendas' %}">
+                                    <i class="bi bi-receipt"></i> Vendas
                                 </a>
                             </li>
                         {% else %}
@@ -61,14 +107,15 @@
                             </li>
                         {% endif %}
 
-                        <li class="nav-item ms-2"><span class="nav-link disabled">|</span></li>
-                        <li class="nav-item ms-2"><span class="nav-link text-light">Olá, {{ user.username }}</span></li>
+                        <li class="nav-item ms-3 d-none d-lg-block"><span class="nav-link disabled">|</span></li>
+                        <li class="nav-item ms-2"><span class="nav-link text-light opacity-75">Olá, {{ user.username }}</span></li>
                         <li class="nav-item">
                             <form action="{% url 'logout' %}" method="post" class="d-inline">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-outline-light ms-3">Sair</button>
                             </form>
                         </li>
+
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                         <li class="nav-item ms-2">
@@ -76,9 +123,9 @@
                         </li>
                     {% endif %}
 
-                    <li class="nav-item ms-3">
-                        <button class="btn btn-link nav-link p-0" onclick="toggleTheme()">
-                            <i class="bi bi-moon-stars-fill text-white" id="theme-icon"></i>
+                    <li class="nav-item ms-3 border-start ps-3 border-secondary">
+                        <button class="btn btn-link nav-link p-0" id="bd-theme-toggle" type="button" title="Alternar Tema">
+                            <i class="bi bi-moon-stars-fill theme-icon text-white" id="theme-icon-active"></i>
                         </button>
                     </li>
                 </ul>
@@ -89,7 +136,7 @@
     <div class="container">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
@@ -104,17 +151,53 @@
 
     <footer class="mt-5 py-4 text-center border-top bg-dark text-white">
         <div class="container">
-            <p class="mb-0">&copy; 2025 PedAI | FICR</p>
+            <p class="mb-0 fw-bold">&copy; 2025 PedAI - Projeto Acadêmico</p>
+            <small class="text-white-50">Faculdade Católica Imaculada Conceição do Recife</small>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-bs-theme');
-            html.setAttribute('data-bs-theme', current === 'dark' ? 'light' : 'dark');
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.querySelector('#bd-theme-toggle')
+            const icon = document.querySelector('#theme-icon-active')
+            
+            // Função para saber o tema atual
+            const getPreferredTheme = () => {
+                const storedTheme = localStorage.getItem('theme')
+                if (storedTheme) { return storedTheme }
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+            }
+
+            // Atualiza o ícone conforme o tema
+            const showActiveTheme = theme => {
+                if (theme === 'dark') {
+                    icon.classList.remove('bi-moon-stars-fill')
+                    icon.classList.add('bi-sun-fill')
+                } else {
+                    icon.classList.remove('bi-sun-fill')
+                    icon.classList.add('bi-moon-stars-fill')
+                }
+            }
+
+            // Define o tema e salva
+            const setTheme = theme => {
+                document.documentElement.setAttribute('data-bs-theme', theme)
+                localStorage.setItem('theme', theme)
+                showActiveTheme(theme)
+            }
+
+            // Inicializa o ícone correto
+            showActiveTheme(getPreferredTheme())
+
+            // Evento de clique
+            toggleButton.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-bs-theme')
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+                setTheme(newTheme)
+            })
+        })
     </script>
 </body>
 </html>

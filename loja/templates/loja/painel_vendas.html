@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-ficr fw-bold"><i class="bi bi-receipt"></i> Pedidos Recebidos</h2>
+        <a href="{% url 'loja:minha_loja' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-box"></i> Gerir Produtos
+        </a>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#ID</th>
+                            <th>Cliente</th>
+                            <th>Produto</th>
+                            <th>Qtd</th>
+                            <th>Retirada</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in itens %}
+                        <tr>
+                            <td>#{{ item.pedido.id }}</td>
+                            <td class="fw-bold">{{ item.pedido.comprador.username }}</td>
+                            <td>{{ item.produto.nome }}</td>
+                            <td class="fw-bold fs-5">{{ item.quantidade }}</td>
+                            <td>{{ item.pedido.data_hora_retirada|date:"d/m H:i" }}</td>
+                            <td>
+                                {% if item.pedido.status == 'pendente' %}
+                                    <span class="badge bg-warning text-dark">Pendente</span>
+                                {% elif item.pedido.status == 'confirmado' %}
+                                    <span class="badge bg-primary">Em Preparo</span>
+                                {% elif item.pedido.status == 'concluido' %}
+                                    <span class="badge bg-success">Entregue</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if item.pedido.status == 'pendente' %}
+                                    <a href="{% url 'loja:atualizar_pedido' item.pedido.id 'confirmado' %}" class="btn btn-sm btn-primary">
+                                        Confirmar
+                                    </a>
+                                {% elif item.pedido.status == 'confirmado' %}
+                                    <a href="{% url 'loja:atualizar_pedido' item.pedido.id 'concluido' %}" class="btn btn-sm btn-success">
+                                        Concluir
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                Nenhum pedido recebido ainda.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

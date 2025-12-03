@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> Atenção!</h4>
+            </div>
+            <div class="card-body p-4 text-center">
+                
+                <h5 class="mb-3">Tem certeza que deseja excluir este produto?</h5>
+                
+                <div class="alert alert-light border mb-4">
+                    <h3 class="fw-bold text-danger">{{ produto.nome }}</h3>
+                    <p class="mb-0 text-muted">Esta ação não pode ser desfeita e o estoque será perdido.</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg fw-bold">
+                            Sim, Excluir Produto
+                        </button>
+                        
+                        <a href="{% url 'loja:minha_loja' %}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

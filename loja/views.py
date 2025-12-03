@@ -41,6 +41,23 @@ def adicionar_produto(request):
             
     return render(request, 'loja/adicionar_produto.html', {'form': form})
 
+@login_required
+def painel_vendas(request):
+    if request.user.tipo_utilizador != 'vendedor':
+        return redirect('loja:home')
+    
+    itens_vendidos = ItemPedido.objects.filter(produto__vendedor=request.user).order_by('-pedido__data_criacao')
+    
+    return render(request, 'loja/painel_vendas.html', {'itens': itens_vendidos})
+
+@login_required
+def atualizar_pedido(request, pedido_id, novo_status):
+    
+    pedido = get_object_or_404(Pedido, id=pedido_id, itens__produto__vendedor=request.user)
+    pedido.status = novo_status
+    pedido.save()
+    messages.success(request, f"Status atualizado para {novo_status}")
+    return redirect('loja:painel_vendas')
 
 @login_required
 def detalhe_produto(request, produto_id):
@@ -83,17 +100,49 @@ def detalhe_produto(request, produto_id):
 
 @login_required
 def editar_produto(request, produto_id):
-    produto = get_object_or_404(Produto,id = produto_id, vendedor = request.user)
-    
+    produto = get_object_or_404(Produto, id=produto_id, vendedor=request.user)
+
     if request.method == 'POST':
-        form = ProdutoForm(request.POST, request.FILES, instance= produto)
-        
+        form = ProdutoForm(request.POST, request.FILES, instance=produto)
         if form.is_valid():
             form.save()
-            messages.success(request, "Produto Atualizado com Sucesso!!")
+            messages.success(request, "Produto atualizado!")
             return redirect('loja:minha_loja')
-    
-    else: 
+    else:
         form = ProdutoForm(instance=produto)
-        
+
     return render(request, 'loja/editar_produto.html', {'form': form, 'produto': produto})
+
+@login_required
+def excluir_produto(request, produto_id):
+   
+    produto = get_object_or_404(Produto, id=produto_id, vendedor=request.user)
+
+    if request.method == 'POST':
+        
+        produto.delete()
+        messages.success(request, "Produto removido com sucesso!")
+        return redirect('loja:minha_loja')
+
+    return render(request, 'loja/confirmar_exclusao.html', {'produto': produto})
+
+@login_required
+def cancelar_pedido(request, pedido_id):
+    
+    pedido = get_object_or_404(Pedido, id=pedido_id, itens__produto__vendedor=request.user)
+    
+    if pedido.status == 'cancelado':
+        messages.warning(request, "Este pedido já foi cancelado.")
+        return redirect('loja:painel_vendas')
+
+    
+    for item in pedido.itens.all():
+        produto = item.produto
+        produto.disponibilidade += item.quantidade
+        produto.save()
+    
+    pedido.status = 'cancelado'
+    pedido.save()
+    
+    messages.error(request, f"Pedido #{pedido.id} cancelado e estoque devolvido.")
+    return redirect('loja:painel_vendas')

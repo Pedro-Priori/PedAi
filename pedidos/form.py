@@ -7,12 +7,9 @@ class AvaliacaoForm(forms.ModelForm):
         fields = ['nota', 'comentario']
         
         widgets = {
-            'Nota' : forms.NumberInput(attrs={
-                'class' : 'form-control',
-                'min' : '1',
-                'max' : '5',
-                'placeholder' : 'De 1 a 5'
-            }), 
+            'nota': forms.RadioSelect(choices=[
+                (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')
+            ]), 
             'comentario' : forms.Textarea(attrs={
                 'class': 'forms-control',
                 'rows' : 3,

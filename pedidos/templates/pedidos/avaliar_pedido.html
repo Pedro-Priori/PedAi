@@ -1,39 +1,92 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<style>
+    /* Esconde os botões de rádio originais */
+    .rating input {
+        display: none;
+    }
+
+    /* Configura o container das estrelas */
+    .rating {
+        display: flex;
+        flex-direction: row-reverse; /* O Segredo: inverte a ordem */
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* Estilo das Estrelas (Cinza por padrão) */
+    .rating label {
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        font-size: 40px; /* Tamanho da estrela */
+        color: #ccc;     /* Cor desativada */
+        transition: color 0.2s;
+        line-height: 40px;
+    }
+
+    /* Quando passa o mouse ou seleciona: fica Dourado */
+    .rating label:hover,
+    .rating label:hover ~ label,
+    .rating input:checked ~ label {
+        color: #FFCC00; /* Dourado FICR */
+    }
+    
+    /* Efeito de escala ao passar o mouse */
+    .rating label:hover {
+        transform: scale(1.2);
+    }
+</style>
+
 <div class="row justify-content-center py-5">
-    <div class="col-md-6">
+    <div class="col-md-6 col-lg-5">
         <div class="card shadow-lg border-0">
-            <div class="card-header bg-warning text-dark">
-                <h4 class="mb-0 fw-bold"><i class="bi bi-star-fill"></i> Avaliar Pedido #{{ pedido.id }}</h4>
+            <div class="card-header bg-warning text-dark text-center py-3">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-star-fill"></i> Avaliar Experiência</h4>
             </div>
+            
             <div class="card-body p-4">
                 
-                <div class="alert alert-light border mb-4">
-                    <p class="mb-1"><strong>Você comprou:</strong></p>
-                    <ul class="mb-0 text-muted small">
-                        {% for item in pedido.itens.all %}
-                            <li>{{ item.quantidade }}x {{ item.produto.nome }}</li>
-                        {% endfor %}
-                    </ul>
+                <div class="text-center mb-4">
+                    <h6 class="text-muted text-uppercase small fw-bold">Pedido #{{ pedido.id }}</h6>
+                    <div class="alert alert-light border mt-2">
+                        <ul class="list-unstyled mb-0">
+                            {% for item in pedido.itens.all %}
+                                <li>{{ item.quantidade }}x <strong>{{ item.produto.nome }}</strong></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
 
                 <form method="post">
                     {% csrf_token %}
                     
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Nota (1 a 5 Estrelas)</label>
-                        {{ form.nota }}
+                    <div class="mb-4 text-center">
+                        <label class="form-label fw-bold d-block">Sua Nota</label>
+                        
+                        <div class="rating">
+                            <input type="radio" name="nota" value="5" id="star5"><label for="star5" title="Excelente">★</label>
+                            <input type="radio" name="nota" value="4" id="star4"><label for="star4" title="Muito Bom">★</label>
+                            <input type="radio" name="nota" value="3" id="star3"><label for="star3" title="Bom">★</label>
+                            <input type="radio" name="nota" value="2" id="star2"><label for="star2" title="Ruim">★</label>
+                            <input type="radio" name="nota" value="1" id="star1"><label for="star1" title="Péssimo">★</label>
+                        </div>
                     </div>
                     
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Comentário</label>
+                        <label class="form-label fw-bold">Deixe um comentário</label>
                         {{ form.comentario }}
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary fw-bold">Enviar Avaliação</button>
-                        <a href="{% url 'pedidos:meus_pedidos' %}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm">
+                            Enviar Avaliação
+                        </button>
+                        <a href="{% url 'pedidos:meus_pedidos' %}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
                     </div>
                 </form>
             </div>
@@ -42,10 +95,8 @@
 </div>
 
 <script>
-    var inputs = document.querySelectorAll('input, textarea');
-    inputs.forEach(function(input) {
-        input.classList.add('form-control');
-    });
+    
+    document.querySelector('textarea').classList.add('form-control');
 </script>
 
 {% endblock %}
