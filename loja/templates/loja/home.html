@@ -31,6 +31,11 @@
                             <small class="text-muted">
                                 <i class="bi bi-shop"></i> {{ produto.vendedor.username }}
                             </small>
+                            {% if produto.vendedor.telefone %}
+                                <small class="text-success">
+                                    <i class="bi bi-whatsapp"></i> {{ produto.vendedor.telefone }}
+                                </small>
+                            {% endif %}
                             <small class="text-success fw-bold">
                                 {{ produto.disponibilidade }} un.
                             </small>

@@ -6,7 +6,7 @@ class RegistoCompradorForm(UserCreationForm):
     class Meta:
         model = Usuario
         
-        fields = ('username', 'email', 'first_name', 'local', 'tipo_utilizador')
+        fields = ('username', 'email', 'first_name', 'telefone', 'local', 'tipo_utilizador')
         
         widgets = {
             
@@ -14,12 +14,14 @@ class RegistoCompradorForm(UserCreationForm):
             'local' : forms.TextInput(attrs={'class':'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class':'form-control'}),
-            'username' : forms.TextInput(attrs={'class':'form-control'})       
+            'username' : forms.TextInput(attrs={'class':'form-control'}), 
+            'telefone' : forms.TextInput(attrs={'class': 'form-control' , 'placeholder': '(XX) 9XXXX-XXXX'})    
          
          }
         
         labels = {
-            'tipo_utilizador':'Sou :',
-            'local': 'Meu local é '
+            'tipo_utilizador':'Sou: ',
+            'local': 'Meu local é: ',
+            'telefone': 'WhatsApp / Telefone'
         }
         

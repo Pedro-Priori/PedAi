@@ -10,7 +10,7 @@ class UsuarioAdmin(UserAdmin):
     do Django, que já tem toda a segurança e campos prontos.
     """
     
-    # Adiciona os nossos campos personalizados ('tipo_utilizador', 'local')
+    
     # à lista de campos que o admin mostra.
     fieldsets = UserAdmin.fieldsets + (
         ('Campos Personalizados (PedAI)', {

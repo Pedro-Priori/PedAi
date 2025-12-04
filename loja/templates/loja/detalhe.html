@@ -28,6 +28,17 @@
                         <small class="text-uppercase text-warning fw-bold tracking-wide">
                             Vendido por: {{ produto.vendedor.username }}
                         </small>
+
+                        {% if produto.vendedor.telefone %}
+                            <br>
+                            <small class="text-success">
+                                <i class="bi bi-whatsapp"></i> 
+                                <a href="https://wa.me/55{{ produto.vendedor.telefone|cut:'('|cut:')'|cut:' '|cut:'-' }}" target="_blank" class="text-decoration-none text-success fw-bold">
+                                    {{ produto.vendedor.telefone }}
+                                </a>
+                            </small>
+                        {% endif %}
+
                         <h1 class="display-5 fw-bold mt-2 mb-3">{{ produto.nome }}</h1>
                         
                         <div class="d-flex align-items-center gap-3">
