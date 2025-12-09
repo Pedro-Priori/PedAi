@@ -19,7 +19,7 @@ Antes de começar, você precisa ter o **Python** instalado.
 2.  Baixe a versão mais recente.
 3.  **MUITO IMPORTANTE:** Na hora de instalar, marque a caixinha **"Add Python to PATH"** antes de clicar em "Install".
 
-### 🐧 Linux (Ubuntu/Debian)
+### | Linux (Ubuntu/Debian)
 
 Abra o seu terminal e rode os comandos:
 
