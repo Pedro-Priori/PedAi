@@ -132,7 +132,7 @@ AUTH_USER_MODEL = 'utilizadores.Usuario'
 
 MEDIA_URL = '/media/'
 
-
+ALLOWED_HOSTS = ['*']
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
